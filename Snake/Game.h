@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "Snake.h"
 #include "Food.h"
+#include "Constants.h"
 
 class Game {
 public:
