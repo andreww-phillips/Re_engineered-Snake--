@@ -1,14 +1,15 @@
 #include <iostream>
 #include <deque>
-#include "Snake.cpp"
-#include "Food.cpp"
+#include <SDL.h>
+#include "Snake.h"
+#include "Food.h"
 
 class Game{
     public:
         Snake snake;
         Food food; 
 
-        void updata(){
+        void update(){
 
         }
 
