@@ -12,13 +12,15 @@ class Food{
 
     public:
         Vec2 position;
+        const int GRID_WIDTH = 20;
+        const int GRID_HEIGHT = 20;
 
         // Generate food at random positions within the grid, making sure they're not in positions occupied
         // by the snake's body
-        void Food::spawn(const std::deque<Vec2>& body){
+        void spawn(const std::deque<Vec2>& body){
             do{
-                position.x = rand() % 20;
-                position.y = rand() % 20;
+                position.x = rand() % GRID_WIDTH;
+                position.y = rand() % GRID_HEIGHT;
             }while(isOnSnake(body));
         }
 
