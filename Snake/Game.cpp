@@ -1,14 +1,17 @@
 #include "Game.h"
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <ctime>
 
     Game::Game() {
         // Reseed the random number generator for spawning food in different positions
         srand(time(0));
+        TTF_Init();
+        startTime = SDL_GetTicks();
         // Creates the OS window 
         window = SDL_CreateWindow("Snake",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            600, 600, 0);
+            GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE + 40, 0);
         // Creates the renderer. -1 picks the first available graphics driver and 0 means no special flags    
         renderer = SDL_CreateRenderer(window, -1, 0);
         // Spawns the initial food 
@@ -19,6 +22,7 @@
         // Clean up SDL resources when the game is destroyed
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
+        TTF_Quit();
     }
 
     // Handle user input for controlling the snake's direction and quitting the game
@@ -45,7 +49,9 @@
     void Game::update() {
         // Handles if the snake initially spawns on the food
         if (snake.body.front() == food.position) {
+            // Update score when an apple is eaten and spawn new food
             snake.eat();
+            score++;
             food.spawn(snake.body);
         } else {
             snake.move();
@@ -75,6 +81,8 @@
             //Response the snake if user decides to play again, otherwise quit the game
             if (buttonid == 1) {
                 // reset the game
+                score = 0;
+                startTime = SDL_GetTicks();
                 snake.body = {{0, 0}};
                 snake.direction = {1, 0};
                 food.spawn(snake.body);
@@ -124,6 +132,20 @@
         SDL_RenderFillRect(renderer, &foodRect);
 
         SDL_RenderPresent(renderer);
+
+        TTF_Font* font = TTF_OpenFont("/System/Library/Fonts/Helvetica.ttc", 20);
+        std::string text = "Score: " + std::to_string(score) + "  Time: " + std::to_string((SDL_GetTicks() - startTime) / 1000) + "s";
+        SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+        SDL_Rect scoreArea = {0, GRID_HEIGHT * CELL_SIZE, GRID_WIDTH * CELL_SIZE, 40};
+        SDL_RenderFillRect(renderer, &scoreArea);
+        SDL_Color white = {255, 255, 255, 255};
+        SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), white);
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_Rect dst = { 10, GRID_HEIGHT * CELL_SIZE + 10, surface->w, surface->h };
+        SDL_RenderCopy(renderer, texture, nullptr, &dst);
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+        TTF_CloseFont(font);    
     }
 
     // Main game loop that iterates in a loop until the user decides to quit or the snake dies
