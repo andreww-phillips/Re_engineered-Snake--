@@ -1,35 +1,23 @@
 #include <deque>
 #include <cstdlib>
+#include "Food.h"
+#include "Constants.h"
 
-class Food{
-    struct Vec2 { //Creates a struct for the snake/body and its direction
-        int x, y;
-        bool operator==(const Vec2& other) const {
-            return x == other.x && y == other.y;
+// Generate food at random positions within the grid, making sure they're not in positions occupied
+// by the snake's body
+void Food::spawn(const std::deque<Vec2>& body){
+    do{
+        position.x = rand() % GRID_WIDTH;
+        position.y = rand() % GRID_HEIGHT;
+    }while(isOnSnake(body));
+}
+
+// Instance checking for food spawning to ensure that the food does not spawn on the snake's body
+bool Food::isOnSnake(const std::deque<Vec2>& body){
+    for(const Vec2& segment : body){
+        if(position == segment){
+            return true;
         }
-    };
-
-    public:
-        Vec2 position;
-        const int GRID_WIDTH = 20;
-        const int GRID_HEIGHT = 20;
-
-        // Generate food at random positions within the grid, making sure they're not in positions occupied
-        // by the snake's body
-        void spawn(const std::deque<Vec2>& body){
-            do{
-                position.x = rand() % GRID_WIDTH;
-                position.y = rand() % GRID_HEIGHT;
-            }while(isOnSnake(body));
-        }
-
-        // Instance checking for food spawning to ensure that the food does not spawn on the snake's body
-        bool isOnSnake(const std::deque<Vec2>& body){
-            for(const Vec2& segment : body){
-                if(position == segment){
-                    return true;
-                }
-            }
-            return false;
-        }
-};
+    }
+    return false;
+}
