@@ -1,4 +1,3 @@
-#include <iostream>
 #include <deque>
 #include <SDL.h>
 #include "Snake.h"
