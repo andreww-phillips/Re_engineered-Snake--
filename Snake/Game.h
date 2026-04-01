@@ -11,12 +11,12 @@ public:
     Snake snake;
     Food food;
     bool running = true;
-    int score = 0;         
-    Uint32 startTime = SDL_GetTicks(); 
+    int score = 0;
     std::string game_state = "Starting"; 
 
     SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
+    SDL_Renderer* renderer = nullptr;         
+    Uint32 startTime = SDL_GetTicks(); 
 
     Game();
     ~Game();
