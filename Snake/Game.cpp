@@ -135,9 +135,11 @@
 
         TTF_Font* font = TTF_OpenFont("/System/Library/Fonts/Helvetica.ttc", 20);
         std::string text = "Score: " + std::to_string(score) + "  Time: " + std::to_string((SDL_GetTicks() - startTime) / 1000) + "s";
-        SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+        // Render the score and time area
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
         SDL_Rect scoreArea = {0, GRID_HEIGHT * CELL_SIZE, GRID_WIDTH * CELL_SIZE, 40};
         SDL_RenderFillRect(renderer, &scoreArea);
+        // Render the score and time text
         SDL_Color white = {255, 255, 255, 255};
         SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), white);
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
