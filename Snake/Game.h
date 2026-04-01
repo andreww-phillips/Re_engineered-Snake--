@@ -12,7 +12,8 @@ public:
     Food food;
     bool running = true;
     int score = 0;         
-    Uint32 startTime = SDL_GetTicks();  
+    Uint32 startTime = SDL_GetTicks(); 
+    std::string game_state = "Starting"; 
 
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;

@@ -7,7 +7,6 @@
         // Reseed the random number generator for spawning food in different positions
         srand(time(0));
         TTF_Init();
-        startTime = SDL_GetTicks();
         // Creates the OS window 
         window = SDL_CreateWindow("Snake",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -35,6 +34,7 @@
             }
             // Controls key combinds using arrow keys and prevent the snake from going 180 degrees
             if (event.type == SDL_KEYDOWN) {
+                game_state = "Playing";
                 switch (event.key.keysym.sym) {
                     case SDLK_UP:    if (snake.direction.y != 1)  snake.direction = {0, -1}; break;
                     case SDLK_DOWN:  if (snake.direction.y != -1) snake.direction = {0,  1}; break;
@@ -47,49 +47,51 @@
     }
 
     void Game::update() {
-        // Handles if the snake initially spawns on the food
-        if (snake.body.front() == food.position) {
-            // Update score when an apple is eaten and spawn new food
-            snake.eat();
-            score++;
-            food.spawn(snake.body);
-        } else {
-            snake.move();
-        }
-        // Handles the game over event when the snake dies. Returns a message box allowing the user to quit or play again
-        if (snake.isDead()) {
-            SDL_MessageBoxButtonData buttons[] = {
-                // flags, buttonid, text
-                { 0, 0, "Quit" },   
-                { 0, 1, "Play Again" }
-            };
-            // Packs everything up into one struct. Includes the error message and the "Quit" and "Play Again" buttons
-            SDL_MessageBoxData messageboxdata = {
-                SDL_MESSAGEBOX_ERROR,   
-                window,                 
-                "Game Over",            
-                "You died!",            
-                2,                      
-                buttons,                
-                nullptr                
-            };
-            
-            // Function call to implement the display of the struct defined just above with the error message and user end of game handling
-            int buttonid;
-            SDL_ShowMessageBox(&messageboxdata, &buttonid);
-
-            //Response the snake if user decides to play again, otherwise quit the game
-            if (buttonid == 1) {
-                // reset the game
-                score = 0;
-                startTime = SDL_GetTicks();
-                snake.body = {{0, 0}};
-                snake.direction = {1, 0};
+        if(game_state == "Playing") {
+            // Handles if the snake initially spawns on the food
+            if (snake.body.front() == food.position) {
+                // Update score when an apple is eaten and spawn new food
+                snake.eat();
+                score++;
                 food.spawn(snake.body);
             } else {
-                running = false;
+                snake.move();
             }
-        }
+            // Handles the game over event when the snake dies. Returns a message box allowing the user to quit or play again
+            if (snake.isDead()) {
+                SDL_MessageBoxButtonData buttons[] = {
+                    // flags, buttonid, text
+                    { 0, 0, "Quit" },   
+                    { 0, 1, "Play Again" }
+                };
+                // Packs everything up into one struct. Includes the error message and the "Quit" and "Play Again" buttons
+                SDL_MessageBoxData messageboxdata = {
+                    SDL_MESSAGEBOX_ERROR,   
+                    window,                 
+                    "Game Over",            
+                    "You died!",            
+                    2,                      
+                    buttons,                
+                    nullptr                
+                };
+                
+                // Function call to implement the display of the struct defined just above with the error message and user end of game handling
+                int buttonid;
+                SDL_ShowMessageBox(&messageboxdata, &buttonid);
+
+                //Response the snake if user decides to play again, otherwise quit the game
+                if (buttonid == 1) {
+                    // reset the game
+                    score = 0;
+                    startTime = SDL_GetTicks();
+                    snake.body = {{0, 0}};
+                    snake.direction = {1, 0};
+                    food.spawn(snake.body);
+                } else {
+                    running = false;
+                }
+            }
+        }    
     }
 
     void Game::draw() {
